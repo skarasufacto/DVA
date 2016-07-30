@@ -1,8 +1,8 @@
-/*		dva_pkt file		*/
-/*	Defines the main		*/
-/*	functions and vars to	*/
-/*	send and receive data	*/
-/*--------------------------*/
+/*		dva_pkt file
+ *	Defines the main
+ *	functions and vars to
+ *	send and receive data
+ *--------------------------*/
 
 //Includes and defines
 #ifndef _INCLUDED_WIRE

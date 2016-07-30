@@ -1,7 +1,7 @@
-/*		DVA Main file		*/
-/*	Defines main functions	*/
-/*	of the DVA device		*/
-/*--------------------------*/
+/*		DVA Main file
+ *	Defines main functions
+ *	of the DVA device
+ *---------------------------*/
 
 //Includes and defines
 #ifndef _INCLUDED_WIRE
