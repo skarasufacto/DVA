@@ -24,7 +24,7 @@ LiquidCrystal_I2C	lcd(0x27,2,1,0,4,5,6,7);
  * ------------------------------*/
 void lcd_setup(){
 	lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);
-    lcd.setBacklight(HIGH); // NOTE: You can turn the backlight off by setting it to LOW instead of HIGH
+	lcd.setBacklight(HIGH); // NOTE: You can turn the backlight off by setting it to LOW instead of HIGH
     lcd.begin(16, 2);
 }
 
