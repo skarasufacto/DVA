@@ -19,3 +19,20 @@
 #define TX_EN_PIN 3
 #define _TX_RX_CONST
 #endif
+
+/*	rf_setup function
+ * Used to setup the rf modules
+ * pins and variables
+ *---------------------------------
+ * returns: void
+ * ------------------------------*/
+void rf_setup(){
+	vw_set_tx_pin(TX_PIN);
+	vw_set_rx_pin(RX_PIN);
+	vw_set_ptt_pin(TX_EN_PIN);
+	pinMode(LED_PIN, OUTPUT);
+	vw_set_ptt_inverted(true); // Required for DR3100
+	
+	vw_setup(2000);
+}
+
