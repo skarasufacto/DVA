@@ -54,6 +54,9 @@ void setup(){
 	//Initialize Serial
 	Serial.begin(9600);
 	Serial.write("Initialized\n");
+	
+	//Initialize lcd
+	lcd_setup();
 }
 
 /*	loop function
@@ -76,7 +79,8 @@ void setup(){
 	 else{
 		 //reset lcd
 		 //read packet from rx
-			//print lcd/ble
+			//lcd_print(packet);
+			//print ble
 			//send packet location
 	}
 	//wait for the RX and TX to end their functions
