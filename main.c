@@ -10,6 +10,15 @@
 #define _INCLUDED_WIRE
 #endif
 
+/*	Possible DVA Roles:
+ * 		'1' TX
+ * 		'2' RX		*/
+#ifndef _ROLES_DVA
+#define TX_ROLE '1'
+#define RX_ROLE '2'
+#define _ROLES_DVA
+#endif
+
 //Buttons ids, used to read data
 #ifndef _BUTTONS_IDS
 #define CH_MODE_BUTTON 0
@@ -17,10 +26,7 @@
 #endif
 
 //Global variables
-/*	Possible DVA Roles:
- * 		'1' TX
- * 		'2' RX		*/
-char role_DVA = '1';
+char role_DVA = TX_ROLE;
 int lastChModeButtonState = LOW;
 
 /*	setup function
@@ -56,7 +62,7 @@ void setup(){
 	 int changeRole = 0;
 	 
 	 //if role_DVA == TX
-	 if(role_DVA == '1'){
+	 if(role_DVA == TX_ROLE){
 		 //montar packet
 		 //send packet
 	 }
@@ -85,11 +91,11 @@ void setup(){
 	
 	if(changeRole){
 		switch(role_DVA){
-			case '1' :
-				role_DVA = '2';
+			case TX_ROLE :
+				role_DVA = RX_ROLE;
 				break;
-			case '2' :
-				role_DVA = '1';
+			case RX_ROLE :
+				role_DVA = TX_ROLE;
 				break;
 		}
 	}

@@ -36,3 +36,12 @@ void rf_setup(){
 	vw_setup(2000);
 }
 
+//TODO add functions to send and receive the packets from RF modules
+/*void rf_tx(){
+	
+}
+
+char* rf_rx(){
+	
+}*/
+
