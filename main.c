@@ -28,6 +28,9 @@
 //Global variables
 char role_DVA = TX_ROLE;
 int lastChModeButtonState = LOW;
+//Timers for the push button
+long lastChModeTime = 0;
+long ChModeDelay = 5000;
 
 /*	setup function
  * Used to set variables and pins
@@ -82,14 +85,16 @@ void setup(){
 	
 	if(reading != lastChModeButtonState){
 		changeRole = 1;
+		lastChModeTime = millis();
 	}
 	
 	//check ble for ch_mode pakcet
 	//if(packet received){
 		//changeRole = 1;
+		lastChModeTime = millis();
 	//}
 	
-	if(changeRole){
+	if(changeRole && ((millis() - lastChModeTime) > ChModeDelay){
 		switch(role_DVA){
 			case TX_ROLE :
 				role_DVA = RX_ROLE;
