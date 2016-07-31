@@ -70,13 +70,13 @@ void setup(){
 		 //send packet
 	 }
 	 //else role_DVA = RX
-	 else{
+	 //else{
 		 //reset lcd
 		 //read packet from rx
 			//lcd_print(packet);
 			//print ble
 			//send packet location
-	}
+	//}
 	//wait for the RX and TX to end their functions
 	delay(1000);
 	
@@ -91,7 +91,7 @@ void setup(){
 	//check ble for ch_mode pakcet
 	//if(packet received){
 		//changeRole = 1;
-		lastChModeTime = millis();
+		//lastChModeTime = millis();
 	//}
 	
 	if(changeRole && ((millis() - lastChModeTime) > ChModeDelay){
