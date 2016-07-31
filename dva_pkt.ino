@@ -23,6 +23,7 @@
 //PKT management constants
 #ifndef _PKT_MNG_CONST
 #define PKT_END '#'
+#define PREAMBLE "DvA"
 #define _PKT_MNG_CONST
 #endif
 
@@ -78,7 +79,7 @@ char rx_chMode_packet(){
 	
 	//Packet must be something like "DvA IDIDID (1|2) #" so the new mode must be at pos 9 and packet len must always be 10!
 	if(len == 10){
-		if(rxPacket.startsWith("DvA")){
+		if(rxPacket.startsWith(PREAMBLE)){
 			if(rxPacket.charAt(9) == '1' || rxPacket.charAt(9) == '2')
 				return rxPacket.charAt(9);
 		}
