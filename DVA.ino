@@ -62,6 +62,7 @@ void setup(){
  * -------------------------*/
  void loop(){
 	 int reading;
+	 char newMode = '0';
 	 int changeRole = 0;
 	 
 	 //if role_DVA == TX
@@ -70,13 +71,13 @@ void setup(){
 		 //send packet
 	 }
 	 //else role_DVA = RX
-	 //else{
+	 else{
 		 //reset lcd
 		 //read packet from rx
 			//lcd_print(packet);
 			//print ble
 			//send packet location
-	//}
+	}
 	//wait for the RX and TX to end their functions
 	delay(1000);
 	
@@ -89,12 +90,13 @@ void setup(){
 	}
 	
 	//check ble for ch_mode pakcet
-	//if(packet received){
-		//changeRole = 1;
-		//lastChModeTime = millis();
-	//}
+	newMode = rx_chMode_packet();
+	if(newMode != '0' && newMode != role_DVA){
+		changeRole = 1;
+		lastChModeTime = millis();
+	}
 	
-	if(changeRole && ((millis() - lastChModeTime) > ChModeDelay){
+	if(changeRole && (millis() - lastChModeTime) > ChModeDelay){
 		switch(role_DVA){
 			case TX_ROLE :
 				role_DVA = RX_ROLE;
