@@ -23,6 +23,7 @@
 #ifndef _PKT_TYPES_CONST
 #define BLE_CHMODE 1
 #define BLE_UPDATELOCATION 2
+#define RF_SEND_LOCATION 3
 //TODO: Add more packet types here
 #endif
 
@@ -77,6 +78,10 @@ void setup(){
 	//Initialize lcd
 	lcd_setup();
 	
+	//Initialize geoposition
+	position->latitude = 0.0;
+	position->longitude = 0.0;
+	
 	//Initialize Serial
 	Serial.begin(9600);
 	Serial.write("Initialized\n");
@@ -97,8 +102,7 @@ void setup(){
 	 
 	 //if role_DVA == TX
 	 if(role_DVA == TX_ROLE){
-		 //montar packet
-		 //send packet
+		 tx_rf(position, RF_SEND_LOCATION);
 	 }
 	 //else role_DVA = RX
 	 else{

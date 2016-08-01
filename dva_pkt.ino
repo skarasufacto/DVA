@@ -41,6 +41,7 @@
 #ifndef _PKT_TYPES_CONST
 #define BLE_CHMODE 1
 #define BLE_UPDATELOCATION 2
+#define RF_SEND_LOCATION 3
 //TODO: Add more packet types here
 #endif
 
@@ -149,6 +150,31 @@ void rf_setup(){
 	return result;
  }
  
+ 
+ void tx_rf(struct dva_position *pos, int pkt_type){
+	 struct dva_pkt *pkt;
+	 
+	 pkt->type = 0;
+	 
+	 switch(pkt_type){
+		 case RF_SEND_LOCATION :
+			pkt->type = pkt_type;
+			pkt->len = 26;
+			pkt->data = PREAMBLE;
+			pkt->data += DVA_ID;
+			pkt->data += (char)(pkt_type + '0');
+			pkt->data += parseDoubleToString(pos->latitude);
+			pkt->data += parseDoubleToString(pos->longitude);
+			pkt->data += '#';
+			break;
+	 }
+	 
+	 if(pkt->type != 0){
+		vw_send((uint8_t*)(pkt->data.c_str()), pkt->len);
+		vw_wait_tx();
+	}
+ }
+ 
  /*	pkt_uptade_geoposition function
  * Modifies geoposition given
  * 		a certain packet
@@ -164,4 +190,30 @@ void rf_setup(){
  void pkt_update_geoposition(struct dva_pkt *pkt, struct dva_position *pos){
 	 pos->latitude = atof(pkt->data.substring(PKT_LATITUDE_START_POS, PKT_LATITUDE_END_POS +1).c_str());
 	 pos->longitude = atof(pkt->data.substring(PKT_LONGITUDE_START_POS, PKT_LONGITUDE_END_POS + 1).c_str());
+ }
+ 
+  /*	parseDoubleToString function
+ * Returns a custom string of
+ * 	len 8
+ *---------------------------------
+ * @value: the double to parse
+ *---------------------------------
+ * returns: String value of
+ * 		the double
+ * ------------------------------*/
+ String parseDoubleToString(double value){
+	 if(value < 10.0){
+		 //cut to 6
+		 //return String(value, 6);
+	 }
+	 else if(value >= 10.0 && value < 100.0){
+		 //cut to 5
+		 //return String(value, 5);
+	 }
+	 else{
+		 //cut to 4
+		 //return String(value, 4); not working! TODO: convert strings
+	 }
+	 
+	 return String(); //TEMP! remove when bugfixed!
  }
