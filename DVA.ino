@@ -19,10 +19,28 @@
 #define _ROLES_DVA
 #endif
 
+//PKT valid types
+#ifndef _PKT_TYPES_CONST
+#define BLE_CHMODE 1
+#define BLE_UPDATELOCATION 2
+//TODO: Add more packet types here
+#endif
+
 //Buttons ids, used to read data
 #ifndef _BUTTONS_IDS
 #define CH_MODE_BUTTON 0
 #define _BUTTONS_IDS
+#endif
+
+//Packet structure definition
+#ifndef _PKT_STRUCT
+struct dva_pkt {
+	int type;
+	boolean initialized;
+	String data;
+	int len;
+};
+#define _PKT_STRUCT
 #endif
 
 //Global variables
@@ -61,8 +79,9 @@ void setup(){
  * returns: void
  * -------------------------*/
  void loop(){
+	 struct dva_pkt *pkt;
 	 int reading;
-	 char newMode = '0';
+	 boolean successfullRead = false;
 	 int changeRole = 0;
 	 
 	 //if role_DVA == TX
@@ -89,11 +108,20 @@ void setup(){
 		lastChModeTime = millis();
 	}
 	
-	//check ble for ch_mode pakcet
-	newMode = rx_chMode_packet();
-	if(newMode != '0' && newMode != role_DVA){
-		changeRole = 1;
-		lastChModeTime = millis();
+	//check ble
+	successfullRead = rx_from_ble(pkt);
+	if(successfullRead){
+		switch(pkt->type){
+			case BLE_CHMODE :
+				if(pkt->data.charAt(10) != role_DVA && (pkt->data.charAt(10) == TX_ROLE || pkt->data.charAt(10) == RX_ROLE)){
+					changeRole = 1;
+					lastChModeTime = 0;	//Always change role if ble asks for it
+				}
+				break;
+			case BLE_UPDATELOCATION :
+				//update HERE the geoposition!
+				break;
+		}
 	}
 	
 	if(changeRole && (millis() - lastChModeTime) > ChModeDelay){

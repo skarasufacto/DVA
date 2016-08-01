@@ -27,6 +27,24 @@
 #define _PKT_MNG_CONST
 #endif
 
+//PKT valid types
+#ifndef _PKT_TYPES_CONST
+#define BLE_CHMODE 1
+#define BLE_UPDATELOCATION 2
+//TODO: Add more packet types here
+#endif
+
+//Packet structure definition
+#ifndef _PKT_STRUCT
+struct dva_pkt {
+	int type;
+	boolean initialized;
+	String data;
+	int len;
+};
+#define _PKT_STRUCT
+#endif
+
 /*	rf_setup function
  * Used to setup the rf modules
  * pins and variables
@@ -43,56 +61,70 @@ void rf_setup(){
 	vw_setup(2000);
 }
 
-/*	rx_chMode_packet function
+/*	rx_from_ble function
  * Reads Serial (bluetooth) and searches
- * for a valid ch_mode packet.
+ * for a valid packet.
  *---------------------------------
- * returns: char: will be '0' if
- * 		no valid packet was found
- * 		or '1'|'2' if a valid
- * 		packet was read
+ * @pkt: packet structure used to
+ * 		store the results of the
+ * 		read process
+ *---------------------------------
+ * returns: true on successfull
+ * 		read or false if error
  * ------------------------------*/
-char rx_chMode_packet(){
-	boolean initialized = false;
-	char currentValue;
-	String rxPacket;
-	int len = 0;
-	
-	while(Serial.available() > 0){
+ boolean rx_from_ble(struct dva_pkt *pkt){
+	 char currentValue;
+	 boolean result = false;
+	 pkt->initialized = false;
+	 
+	 while(Serial.available() > 0){
 		currentValue = Serial.read();
 		
 		if(currentValue == PKT_END){
 			break;
 		}
 		else{
-			if(!initialized){
-				rxPacket = String(currentValue);
-				len += 1;
-				initialized = true;
+			if(!pkt->initialized){
+				pkt->data = String(currentValue);
+				pkt->len = 1;
+				pkt->initialized = true;
 			}
 			else{
-				len += 1;
-				rxPacket += currentValue;
+				pkt->len += 1;
+				pkt->data += currentValue;
 			}
 		}
 	}
 	
-	//Packet must be something like "DvA IDIDID (1|2) #" so the new mode must be at pos 9 and packet len must always be 10!
-	if(len == 10){
-		if(rxPacket.startsWith(PREAMBLE)){
-			if(rxPacket.charAt(9) == '1' || rxPacket.charAt(9) == '2')
-				return rxPacket.charAt(9);
+	//Packet must be something like "DvA IDIDID (packet_type) PAYLOAD #" the packet type is at pos 9 and packet len must be > 10
+	if(pkt->len > 10){
+		if(pkt->data.startsWith(PREAMBLE)){
+			pkt->type = pkt->data.charAt(9) - '0';
+			switch(pkt->type){
+				case BLE_CHMODE :
+					if(pkt->len == 11){
+						if(pkt->data.charAt(10) == '1' || pkt->data.charAt(10) == '2'){
+							result = true;
+						}
+						else
+							result = false;
+					}
+					else
+						result = false;
+					break;
+				case BLE_UPDATELOCATION :
+					//Check if it is truly a geoposition pkt!
+					result = false;
+					break;
+				default :
+					result = false;
+					break;
+			}
+		}
+		else{
+			result = false;
 		}
 	}
 	
-	return '0';
-}
-//TODO add functions to send and receive the packets from RF modules
-/*void rf_tx(){
-	
-}
-
-char* rf_rx(){
-	
-}*/
-
+	return result;
+ }
