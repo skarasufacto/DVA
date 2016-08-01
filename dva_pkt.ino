@@ -18,12 +18,16 @@
 #define RX_PIN 11
 #define TX_EN_PIN 3
 #define _TX_RX_CONST
+#define DVA_ID "000001"
 #endif
 
 //PKT management constants
 #ifndef _PKT_MNG_CONST
 #define PKT_END '#'
 #define PREAMBLE "DvA"
+#define PKT_TYPE_POS 9
+#define PKT_ID_START_POS 3
+#define PKT_ID_END_POS 8
 #define _PKT_MNG_CONST
 #endif
 
@@ -43,6 +47,16 @@ struct dva_pkt {
 	int len;
 };
 #define _PKT_STRUCT
+#endif
+
+//Geoposition structure definition
+#ifndef _GEO_STRUCT
+struct dva_position {
+	long latitude;
+	long longitude;
+	long lastUpdated;
+};
+#define _GEO_STRUCT
 #endif
 
 /*	rf_setup function
@@ -98,8 +112,9 @@ void rf_setup(){
 	
 	//Packet must be something like "DvA IDIDID (packet_type) PAYLOAD #" the packet type is at pos 9 and packet len must be > 10
 	if(pkt->len > 10){
-		if(pkt->data.startsWith(PREAMBLE)){
-			pkt->type = pkt->data.charAt(9) - '0';
+		//TODO: ensure the packet is for us (check if IDIDID == our_ID!
+		if(pkt->data.startsWith(PREAMBLE) && ((pkt->data.substring(PKT_ID_START_POS, PKT_ID_END_POS + 1)).equals(DVA_ID))){
+			pkt->type = pkt->data.charAt(PKT_TYPE_POS) - '0';
 			switch(pkt->type){
 				case BLE_CHMODE :
 					if(pkt->len == 11){
@@ -113,7 +128,7 @@ void rf_setup(){
 						result = false;
 					break;
 				case BLE_UPDATELOCATION :
-					//Check if it is truly a geoposition pkt!
+					//TODO: Check if it is truly a geoposition pkt!
 					result = false;
 					break;
 				default :
