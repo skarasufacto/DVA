@@ -43,12 +43,23 @@ struct dva_pkt {
 #define _PKT_STRUCT
 #endif
 
+//Geoposition structure definition
+#ifndef _GEO_STRUCT
+struct dva_position {
+	double latitude;
+	double longitude;
+	//long lastUpdated;
+};
+#define _GEO_STRUCT
+#endif
+
 //Global variables
 char role_DVA = TX_ROLE;
 int lastChModeButtonState = LOW;
 //Timers for the push button
 long lastChModeTime = 0;
 long ChModeDelay = 5000;
+struct dva_position *position;
 
 /*	setup function
  * Used to set variables and pins
@@ -119,7 +130,7 @@ void setup(){
 				}
 				break;
 			case BLE_UPDATELOCATION :
-				//update HERE the geoposition!
+				pkt_update_geoposition(pkt, position);
 				break;
 		}
 	}

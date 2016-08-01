@@ -28,6 +28,12 @@
 #define PKT_TYPE_POS 9
 #define PKT_ID_START_POS 3
 #define PKT_ID_END_POS 8
+#define PKT_CHMODE_LEN 11
+#define PKT_GEO_LEN 26
+#define PKT_LATITUDE_START_POS 10
+#define PKT_LATITUDE_END_POS 17
+#define PKT_LONGITUDE_START_POS 18
+#define PKT_LONGITUDE_END_POS 25
 #define _PKT_MNG_CONST
 #endif
 
@@ -52,9 +58,9 @@ struct dva_pkt {
 //Geoposition structure definition
 #ifndef _GEO_STRUCT
 struct dva_position {
-	long latitude;
-	long longitude;
-	long lastUpdated;
+	double latitude;
+	double longitude;
+	//long lastUpdated;
 };
 #define _GEO_STRUCT
 #endif
@@ -110,14 +116,13 @@ void rf_setup(){
 		}
 	}
 	
-	//Packet must be something like "DvA IDIDID (packet_type) PAYLOAD #" the packet type is at pos 9 and packet len must be > 10
-	if(pkt->len > 10){
-		//TODO: ensure the packet is for us (check if IDIDID == our_ID!
+	//Packet must be something like "DvA IDIDID (packet_type) PAYLOAD #"; the smallest packet is the CHMODE packet
+	if(pkt->len >= PKT_CHMODE_LEN){
 		if(pkt->data.startsWith(PREAMBLE) && ((pkt->data.substring(PKT_ID_START_POS, PKT_ID_END_POS + 1)).equals(DVA_ID))){
 			pkt->type = pkt->data.charAt(PKT_TYPE_POS) - '0';
 			switch(pkt->type){
 				case BLE_CHMODE :
-					if(pkt->len == 11){
+					if(pkt->len == PKT_CHMODE_LEN){
 						if(pkt->data.charAt(10) == '1' || pkt->data.charAt(10) == '2'){
 							result = true;
 						}
@@ -128,8 +133,8 @@ void rf_setup(){
 						result = false;
 					break;
 				case BLE_UPDATELOCATION :
-					//TODO: Check if it is truly a geoposition pkt!
-					result = false;
+					//Packet len must be x;
+					result = (pkt->len == PKT_GEO_LEN) ? true : false;
 					break;
 				default :
 					result = false;
@@ -142,4 +147,21 @@ void rf_setup(){
 	}
 	
 	return result;
+ }
+ 
+ /*	pkt_uptade_geoposition function
+ * Modifies geoposition given
+ * 		a certain packet
+ *---------------------------------
+ * @pkt: packet structure used to
+ * 		read data
+ * @pos: geoposition structure;
+ * 		will store the new
+ * 		geoposition
+ *---------------------------------
+ * returns: void
+ * ------------------------------*/
+ void pkt_update_geoposition(struct dva_pkt *pkt, struct dva_position *pos){
+	 pos->latitude = atof(pkt->data.substring(PKT_LATITUDE_START_POS, PKT_LATITUDE_END_POS +1).c_str());
+	 pos->longitude = atof(pkt->data.substring(PKT_LONGITUDE_START_POS, PKT_LONGITUDE_END_POS + 1).c_str());
  }
