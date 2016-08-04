@@ -170,11 +170,8 @@ void rf_setup(){
 			pkt->data = PREAMBLE;
 			pkt->data += DVA_ID;
 			pkt->data += (char)(pkt_type + '0');
-			//TODO Send "smart" data instead of harcoded shit
-			/*pkt->data += "31.43526";
-			pkt->data += "125.4858";*/
-			pkt->data += parseDoubleToString(pos->latitude);
-		        pkt->data += parseDoubleToString(pos->longitude);
+			pkt->data += parseFloatToString(pos->latitude);
+			pkt->data += parseFloatToString(pos->longitude);
 			pkt->data += '#';
 			break;
 	 }
@@ -224,9 +221,9 @@ void rf_setup(){
 			 return false;
 		 }
 	 }
-else{
-  return false;
-}
+	 else{
+		 return false;
+	 }
  }
  
  /*	pkt_uptade_geoposition function
@@ -246,16 +243,16 @@ else{
 	 pos->longitude = atof(pkt->data.substring(PKT_LONGITUDE_START_POS, PKT_LONGITUDE_END_POS + 1).c_str());
  }
  
-  /*	parseDoubleToString function
+  /*	parseFloatToString function
  * Returns a custom string of
  * 	len 8
  *---------------------------------
- * @value: the double to parse
+ * @value: the float to parse
  *---------------------------------
  * returns: String value of
- * 		the double
+ * 		the float
  * ------------------------------*/
- String parseDoubleToString(float value){
+ String parseFloatToString(float value){
 
 	 String result = String((int) value);
 	 float temp = value - (float)((int)value);
@@ -275,17 +272,3 @@ else{
 
 	 return result;
  }
- /*String parseDoubleToString(float value){
-   String aux = String((int)value);
-   float intermig = value - (int)value;
-   aux = aux + ".";
-   for(int intaux = aux.length(); intaux <= len; intaux++){
-     if (intermig == 0.0) aux = aux + '0';
-     else{
-       intermig *= 10;
-       aux += (char)((int)intermig);
-       intermig = intermig - (int)intermig;
-     }
-   
-   }
- }*/

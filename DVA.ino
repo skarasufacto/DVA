@@ -47,7 +47,7 @@ struct dva_pkt {
 //Geoposition structure definition
 #ifndef _GEO_STRUCT
 struct dva_position {
-  	long lastUpdated;
+	long lastUpdated;
 	float latitude;
 	float longitude;
 
@@ -73,11 +73,11 @@ void setup(){
         //Initialize Serial
 	Serial.begin(9600);
 	Serial.write("Initialized\n");
-
-  role_DVA = RX_ROLE;
-  lastChModeButtonState = HIGH;
-  lastChModeTime = 0;
-  ChModeDelay = 5000;
+	
+	role_DVA = RX_ROLE;
+	lastChModeButtonState = HIGH;
+	lastChModeTime = 0;
+	ChModeDelay = 5000;
   
     pos->lastUpdated = 0.0;
 	pos->latitude = 31.435;
@@ -117,7 +117,6 @@ void setup(){
 	 else{
 		 if(rx_rf(pkt)){
 			 lcd_print((char*)pkt->data.c_str());
-			 //lcd_print(packet);
 			 //print ble
 			 //send packet location
 		 }
@@ -143,7 +142,7 @@ void setup(){
 				}
 				break;
 			case BLE_UPDATELOCATION :
-				//pkt_update_geoposition(pkt, pos);
+				pkt_update_geoposition(pkt, pos);
 				break;
 		}
 	}
