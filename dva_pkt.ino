@@ -25,6 +25,7 @@
 #ifndef _PKT_MNG_CONST
 #define PKT_END '#'
 #define PREAMBLE "DvA"
+#define PKT_MAX_PRESITION 8
 #define PKT_TYPE_POS 9
 #define PKT_ID_START_POS 3
 #define PKT_ID_END_POS 8
@@ -59,8 +60,8 @@ struct dva_pkt {
 //Geoposition structure definition
 #ifndef _GEO_STRUCT
 struct dva_position {
-	double latitude;
-	double longitude;
+	float latitude;
+	float longitude;
 	//long lastUpdated;
 };
 #define _GEO_STRUCT
@@ -80,6 +81,8 @@ void rf_setup(){
 	vw_set_ptt_inverted(true); // Required for DR3100
 	
 	vw_setup(2000);
+	
+	vw_rx_start();
 }
 
 /*	rx_from_ble function
@@ -151,6 +154,10 @@ void rf_setup(){
  }
  
  
+ void tx_to_ble(struct dva_pkt *pkt){
+	 Serial.print(pkt->data.c_str());
+ }
+ 
  void tx_rf(struct dva_position *pos, int pkt_type){
 	 struct dva_pkt *pkt;
 	 
@@ -163,16 +170,63 @@ void rf_setup(){
 			pkt->data = PREAMBLE;
 			pkt->data += DVA_ID;
 			pkt->data += (char)(pkt_type + '0');
+			//TODO Send "smart" data instead of harcoded shit
+			/*pkt->data += "31.43526";
+			pkt->data += "125.4858";*/
 			pkt->data += parseDoubleToString(pos->latitude);
-			pkt->data += parseDoubleToString(pos->longitude);
+		        pkt->data += parseDoubleToString(pos->longitude);
 			pkt->data += '#';
 			break;
 	 }
-	 
+
 	 if(pkt->type != 0){
 		vw_send((uint8_t*)(pkt->data.c_str()), pkt->len);
 		vw_wait_tx();
 	}
+ }
+ 
+ 
+ boolean rx_rf(struct dva_pkt *pkt){
+	 boolean foundEnd = false;
+	 uint8_t message[VW_MAX_MESSAGE_LEN];
+	 uint8_t messageLength = VW_MAX_MESSAGE_LEN;
+
+	 if(vw_get_message(message, &messageLength)){
+		 for(int i = 0; i < messageLength; i++){
+			 if(foundEnd){
+				 //We want to clear the buffer even if the end was found
+				 continue;
+			 }
+			 else{
+				 if(i == 0){
+					pkt->data = String((char)message[i]);
+					pkt->len = 1;
+				}
+				else if(message[i] == PKT_END){
+					foundEnd = true;
+				}
+				 else{
+					pkt->data += (char)message[i];
+					pkt->len += 1;
+				}
+			}
+		 }
+	 }
+	 else{
+		 return false;
+	 }
+	 
+	 if(pkt->len == 26){
+		 if(pkt->data.startsWith(PREAMBLE) && (pkt->data.charAt(PKT_TYPE_POS) - '0') == RF_SEND_LOCATION){
+			 return true;
+		 }
+		 else{
+			 return false;
+		 }
+	 }
+else{
+  return false;
+}
  }
  
  /*	pkt_uptade_geoposition function
@@ -201,19 +255,37 @@ void rf_setup(){
  * returns: String value of
  * 		the double
  * ------------------------------*/
- String parseDoubleToString(double value){
-	 if(value < 10.0){
-		 //cut to 6
-		 //return String(value, 6);
-	 }
-	 else if(value >= 10.0 && value < 100.0){
-		 //cut to 5
-		 //return String(value, 5);
-	 }
-	 else{
-		 //cut to 4
-		 //return String(value, 4); not working! TODO: convert strings
-	 }
+ String parseDoubleToString(float value){
+
+	 String result = String((int) value);
+	 float temp = value - (float)((int)value);
 	 
-	 return String(); //TEMP! remove when bugfixed!
+	 result += '.';
+	 
+	 for(int i = result.length() + 1; i <= PKT_MAX_PRESITION; i++){
+		 if(temp == 0.0){
+			 result += '0';
+		 }
+		 else{
+			 temp *= 10.0;
+			 result += (char)((int) temp + '0');
+			 temp = temp - (float)((int)temp);
+		 }
+	 }
+
+	 return result;
  }
+ /*String parseDoubleToString(float value){
+   String aux = String((int)value);
+   float intermig = value - (int)value;
+   aux = aux + ".";
+   for(int intaux = aux.length(); intaux <= len; intaux++){
+     if (intermig == 0.0) aux = aux + '0';
+     else{
+       intermig *= 10;
+       aux += (char)((int)intermig);
+       intermig = intermig - (int)intermig;
+     }
+   
+   }
+ }*/

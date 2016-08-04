@@ -36,7 +36,7 @@ void buttons_setup(){
  * 		after successful read
  * -------------------------------*/
 int buttons_read(int button_id){
-	int res = LOW;
+	int res = HIGH;
 	
 	switch(button_id){
 		case CH_MODE_BUTTON :
