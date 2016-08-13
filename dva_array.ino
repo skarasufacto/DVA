@@ -80,3 +80,28 @@ boolean array_push(struct dva dva_object){
 	
 	return pushed;
 }
+
+/*	array_pop function
+ * Deletes a certain DVA from
+ * 	the array
+ *---------------------------------
+ * @position: Array position we
+ * 	want to delete
+ * --------------------------------
+ * returns: boolean:
+ * 	true->deleted
+ * 	false->out of range/!valid
+ * ------------------------------*/
+boolean array_pop(int position){
+	struct dva temp_dva;
+	
+	if(position > current_len || position > ARRAY_MAX_LEN || current_len < 1){
+		return false;
+	}
+	else{
+		dva_array[position] = dva_array[current_len - 1];
+		current_len -= 1;
+	}
+	
+	return true;
+}
