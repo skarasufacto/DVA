@@ -91,8 +91,6 @@ boolean array_push(struct dva dva_object){
  * 	false->out of range/!valid
  * ------------------------------*/
 boolean array_pop(){
-	struct dva temp_dva;
-	
 	if(current_target > current_len || current_target > ARRAY_MAX_LEN || current_len < 1){
 		return false;
 	}
