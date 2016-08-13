@@ -36,3 +36,47 @@ void array_setup(){
 	current_target = 0;
 	current_len = 0;
 }
+
+/*	array_push function
+ * Adds or updates a dva on
+ * the dva_array
+ *---------------------------------
+ * @dva_object: the dva we want
+ * 	to insert or update
+ * --------------------------------
+ * returns: boolean:
+ * 	true->updated/inserted
+ * 	false->not inserted/found 
+ * 		&& max_len reached
+ * ------------------------------*/
+boolean array_push(struct dva dva_object){
+	boolean pushed = false;
+	int i = 0;
+	
+	if(current_len != 0){
+		
+		
+		while(i < current_len && i < ARRAY_MAX_LEN && !pushed){
+			if((dva_object.id).equals(dva_array[i].id)){
+				dva_array[i] = dva_object;
+				pushed = true;
+			}
+			
+			i++;
+		}
+		
+		if(!pushed && i < ARRAY_MAX_LEN){
+			current_len += 1;
+			dva_array[i] = dva_object;
+			pushed = true;
+		}
+	}
+	else{
+		current_len = 1;
+		current_target = 0;
+		dva_array[0] = dva_object;
+		pushed = true;
+	}
+	
+	return pushed;
+}
