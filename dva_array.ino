@@ -51,6 +51,7 @@ void array_setup(){
  * ------------------------------*/
 boolean array_push(struct dva dva_object){
 	boolean pushed = false;
+	boolean updated = false;
 	int i = 0;
 	
 	if(current_len != 0){
@@ -59,7 +60,7 @@ boolean array_push(struct dva dva_object){
 		while(i < current_len && i < ARRAY_MAX_LEN && !pushed){
 			if((dva_object.id).equals(dva_array[i].id)){
 				dva_array[i] = dva_object;
-				pushed = true;
+				updated = true;
 			}
 			
 			i++;
@@ -78,7 +79,7 @@ boolean array_push(struct dva dva_object){
 		pushed = true;
 	}
 	
-	return pushed;
+	return pushed || updated;
 }
 
 /*	array_pop function
