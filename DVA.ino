@@ -118,9 +118,19 @@ void setup(){
 	 else{
 		 if(rx_rf(pkt)){
 			 lcd_print((char*)pkt->data.c_str());
-			 //print ble
-			 //send packet location
+			 //TODO: Add the next logic to this part of the code....
+			 //array_push(get_packet_info(pkt));
 		 }
+		 
+		 //calculate_bearing_and_distance(our_dva, array_read());
+		 //lcd.print(bearing, distance);
+		 
+		 //if(change_victim_button.pressed()){
+			//array_switch_target();
+		//}
+		//if(victim_rescued_button.pressed()){
+			//array_pop()
+		//}
 	}
 	//wait for the RX and TX to end their functions
 	delay(1000);
