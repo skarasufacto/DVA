@@ -105,3 +105,45 @@ boolean array_pop(int position){
 	
 	return true;
 }
+
+/*	array_read function
+ * Gives the information of
+ * the DVA we are actually
+ * targeting to
+ *---------------------------------
+ * returns: struct dva: the 
+ * 		object we should read
+ * ------------------------------*/
+struct dva array_read(){
+	struct dva dva_object;
+	
+	if(current_len > 0){
+		dva_object = dva_array[current_target];
+	}
+	
+	return dva_object;
+}
+
+/*	array_switch_target function
+ * Switch between targets
+ *---------------------------------
+ * returns: boolean:
+ * 	true->switched
+ * 	false->array empty
+ * ------------------------------*/
+boolean array_switch_target(){
+	boolean switched = false;
+	
+	if(current_len > 0 && current_target < current_len){
+		if((current_target + 1) == current_len){
+			current_target = 0;
+		}
+		else{
+			current_target += 1;
+		}
+		
+		switched = true;
+	}
+	
+	return switched;
+}
