@@ -44,15 +44,16 @@ struct dva_pkt {
 #define _PKT_STRUCT
 #endif
 
-//Geoposition structure definition
-#ifndef _GEO_STRUCT
-struct dva_position {
+//DVA structure definition
+#ifndef _DVA_STRUCT
+struct dva {
+	String id;
 	long lastUpdated;
 	float latitude;
 	float longitude;
 
 };
-#define _GEO_STRUCT
+#define _DVA_STRUCT
 #endif
 
 //Global variables
@@ -61,7 +62,7 @@ char role_DVA;
 //Timers for the push button
 long lastChModeTime;
 long ChModeDelay;
-struct dva_position *pos;
+struct dva *pos;
 
 /*	setup function
  * Used to set variables and pins

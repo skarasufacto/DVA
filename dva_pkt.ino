@@ -57,14 +57,16 @@ struct dva_pkt {
 #define _PKT_STRUCT
 #endif
 
-//Geoposition structure definition
-#ifndef _GEO_STRUCT
-struct dva_position {
+//DVA structure definition
+#ifndef _DVA_STRUCT
+struct dva {
+	String id;
+	long lastUpdated;
 	float latitude;
 	float longitude;
-	//long lastUpdated;
+
 };
-#define _GEO_STRUCT
+#define _DVA_STRUCT
 #endif
 
 /*	rf_setup function
@@ -158,7 +160,7 @@ void rf_setup(){
 	 Serial.print(pkt->data.c_str());
  }
  
- void tx_rf(struct dva_position *pos, int pkt_type){
+ void tx_rf(struct dva *pos, int pkt_type){
 	 struct dva_pkt *pkt;
 	 
 	 pkt->type = 0;
@@ -238,7 +240,7 @@ void rf_setup(){
  *---------------------------------
  * returns: void
  * ------------------------------*/
- void pkt_update_geoposition(struct dva_pkt *pkt, struct dva_position *pos){
+ void pkt_update_geoposition(struct dva_pkt *pkt, struct dva *pos){
 	 pos->latitude = atof(pkt->data.substring(PKT_LATITUDE_START_POS, PKT_LATITUDE_END_POS +1).c_str());
 	 pos->longitude = atof(pkt->data.substring(PKT_LONGITUDE_START_POS, PKT_LONGITUDE_END_POS + 1).c_str());
  }
