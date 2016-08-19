@@ -6,12 +6,14 @@
  *--------------------------*/
 
 #ifndef _BUTTONS_CONST
-#define CH_MODE_BUTTON_PIN 8
+#define CH_MODE_BUTTON_PIN 22
+#define NEXT_VICTIM_BUTTON_PIN 23
 #define _BUTTONS_CONST
 #endif
 
 #ifndef _BUTTONS_IDS
 #define CH_MODE_BUTTON 0
+#define NEXT_VICTIM_BUTTON 1
 #define _BUTTONS_IDS
 #endif
 
@@ -23,6 +25,7 @@
  * ------------------------------*/
 void buttons_setup(){
 	pinMode(CH_MODE_BUTTON_PIN, INPUT);
+	pinMode(NEXT_VICTIM_BUTTON_PIN, INPUT);
 }
 
 /*	buttons_read function
@@ -41,6 +44,9 @@ int buttons_read(int button_id){
 	switch(button_id){
 		case CH_MODE_BUTTON :
 			res = digitalRead(CH_MODE_BUTTON_PIN);
+			break;
+		case NEXT_VICTIM_BUTTON :
+			res = digitalRead(NEXT_VICTIM_BUTTON);
 			break;
 	}
 	

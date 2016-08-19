@@ -103,8 +103,8 @@ void rf_setup(){
 	 boolean result = false;
 	 pkt->initialized = false;
 	 
-	 while(Serial.available() > 0){
-		currentValue = Serial.read();
+	 while(Serial1.available() > 0){
+		currentValue = Serial1.read();
 		
 		if(currentValue == PKT_END){
 			break;
@@ -155,11 +155,27 @@ void rf_setup(){
 	return result;
  }
  
- 
+ /*	tx_to_ble function
+  * Sends data via Bluetoth
+  * -------------------------------
+  * @pkt: The packet we will send
+  * -------------------------------
+  * returns: void
+  * -----------------------------*/
  void tx_to_ble(struct dva_pkt *pkt){
-	 Serial.print(pkt->data.c_str());
+	 Serial1.print(pkt->data.c_str());
  }
  
+ /*	tx_rf function
+  * Sends data via Bluetoth
+  * -------------------------------
+  * @pos: The dva structure we
+  * 	will read the geoposition
+  * 	information from
+  * @pkt: The packet we will send
+  * -------------------------------
+  * returns: void
+  * -----------------------------*/
  void tx_rf(struct dva *pos, int pkt_type){
 	 struct dva_pkt *pkt;
 	 
@@ -184,7 +200,17 @@ void rf_setup(){
 	}
  }
  
- 
+  /*	rx_rf function
+ * Reads rf and searches
+ * for a valid packet.
+ *---------------------------------
+ * @pkt: packet structure used to
+ * 		store the results of the
+ * 		read process
+ *---------------------------------
+ * returns: true on successfull
+ * 		read or false if error
+ * ------------------------------*/
  boolean rx_rf(struct dva_pkt *pkt){
 	 boolean foundEnd = false;
 	 uint8_t message[VW_MAX_MESSAGE_LEN];

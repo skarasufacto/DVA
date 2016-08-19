@@ -31,3 +31,24 @@ void gps_setup(){
 	pinMode(GPS_TX_PIN, OUTPUT);
 	gps.begin(4800);
 }
+
+void gps_read(){
+	char read;
+	int i = 0;
+	memset(tramaGPS, 0, sizeof(tramaGPS));
+	
+	read = gps.read();
+	
+	if(read == -1){
+		return;
+	}
+	else{
+		while(read != -1){
+			tramaGPS[i] = read;
+			read = gps.read();
+			i++;
+		}
+		
+		Serial.println(tramaGPS);
+	}
+}

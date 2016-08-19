@@ -30,6 +30,7 @@
 //Buttons ids, used to read data
 #ifndef _BUTTONS_IDS
 #define CH_MODE_BUTTON 0
+#define NEXT_VICTIM_BUTTON 1
 #define _BUTTONS_IDS
 #endif
 
@@ -73,6 +74,7 @@ struct dva *pos;
 void setup(){
         //Initialize Serial
 	Serial.begin(9600);
+	Serial1.begin(9600);
 	Serial.write("Initialized\n");
 	
 	role_DVA = RX_ROLE;
@@ -131,6 +133,7 @@ void setup(){
 		//if(victim_rescued_button.pressed()){
 			//array_pop()
 		//}
+		play_beep(255, 5);
 	}
 	//wait for the RX and TX to end their functions
 	delay(1000);
