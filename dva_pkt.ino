@@ -60,6 +60,7 @@ struct dva_pkt {
 //DVA structure definition
 #ifndef _DVA_STRUCT
 struct dva {
+	boolean initialized;
 	String id;
 	long lastUpdated;
 	float latitude;

@@ -143,3 +143,15 @@ boolean array_switch_target(){
 	
 	return switched;
 }
+
+/*	array_is_empty function
+ * Let the program know if
+ * 	the array is empty or not
+ *---------------------------------
+ * returns: boolean:
+ * 	true->array empty
+ * 	false->array !empty
+ * ------------------------------*/
+boolean array_is_empty(){
+	return current_len == 0;
+}

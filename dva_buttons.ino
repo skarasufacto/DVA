@@ -7,13 +7,19 @@
 
 #ifndef _BUTTONS_CONST
 #define CH_MODE_BUTTON_PIN 22
+#define CH_MODE_BUTTON_DELAY 5000
 #define NEXT_VICTIM_BUTTON_PIN 23
+#define NEXT_VICTIM_BUTTON_DELAY 3000
+#define RESCUED_VICTIM_BUTTON_PIN 24
+#define RESCUED_VICTIM_BUTTON_DELAY 3000
+
 #define _BUTTONS_CONST
 #endif
 
 #ifndef _BUTTONS_IDS
 #define CH_MODE_BUTTON 0
 #define NEXT_VICTIM_BUTTON 1
+#define RESCUED_VICTIM_BUTTON 2
 #define _BUTTONS_IDS
 #endif
 
@@ -49,6 +55,14 @@ int buttons_read(int button_id){
 			res = digitalRead(NEXT_VICTIM_BUTTON);
 			break;
 	}
+	
+	return res;
+}
+
+boolean button_is_pressed(int button_id){
+	boolean res = false;
+	
+	//TODO: end this -> add timers here instead of the main program
 	
 	return res;
 }

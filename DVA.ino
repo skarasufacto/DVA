@@ -48,6 +48,7 @@ struct dva_pkt {
 //DVA structure definition
 #ifndef _DVA_STRUCT
 struct dva {
+	boolean initialized;
 	String id;
 	long lastUpdated;
 	float latitude;
@@ -63,7 +64,10 @@ char role_DVA;
 //Timers for the push button
 long lastChModeTime;
 long ChModeDelay;
-struct dva *pos;
+
+//Dva's the program actually tracks
+struct dva *my_dva;
+struct dva *distant_dva;
 
 /*	setup function
  * Used to set variables and pins
@@ -82,9 +86,9 @@ void setup(){
 	lastChModeTime = 0;
 	ChModeDelay = 5000;
   
-    pos->lastUpdated = 0.0;
-	pos->latitude = 31.435;
-	pos->longitude = 125.485;
+    my_dva->lastUpdated = 0.0;
+	my_dva->latitude = 31.435;
+	my_dva->longitude = 125.485;
 	//set the pins for the tx and rx
 	rf_setup();
 	
@@ -97,6 +101,13 @@ void setup(){
 	//Initialize geoposition
 	/*position->latitude = 0.0;
 	position->longitude = 0.0;*/
+	
+	//Initialize DVA structures
+	memset(my_dva, 0, sizeof(struct dva));
+	memset(distant_dva, 0, sizeof(struct dva));
+	
+	my_dva->id = "000001";
+	my_dva->initialized = false;
 }
 
 /*	loop function
@@ -114,26 +125,45 @@ void setup(){
 	 
 	 //if role_DVA == TX
 	 if(role_DVA == TX_ROLE){
-		 tx_rf(pos, RF_SEND_LOCATION);
+		 tx_rf(my_dva, RF_SEND_LOCATION);
 	 }
 	 //else role_DVA = RX
 	 else{
+		 //Check if the radio has a packet for us
 		 if(rx_rf(pkt)){
-			 lcd_print((char*)pkt->data.c_str());
+			 tx_to_ble(pkt);	//Send the data to the app
+			 lcd_print((char*)pkt->data.c_str());	//WIP; must be deleted on final release
 			 //TODO: Add the next logic to this part of the code....
 			 //array_push(get_packet_info(pkt));
 		 }
 		 
-		 //calculate_bearing_and_distance(our_dva, array_read());
-		 //lcd.print(bearing, distance);
+		 //Then check if the array contains a DVA to search and set the arrow and meters to it
+		 if(distant_dva->initialized && !array_is_empty()){
+			 //calculate bearing, print meters and play sound
+			 play_beep(255, 5);
+		 }
+		 else{
+			 if(!array_is_empty()){
+				 *distant_dva = array_read();
+			 }
+			 else{
+				 lcd_print("No DVA found");
+			 }
+		 }
 		 
-		 //if(change_victim_button.pressed()){
-			//array_switch_target();
-		//}
+		 //Last thing, check the buttons state to switch victim or set the actual victim as rescued
+		 reading = buttons_read(NEXT_VICTIM_BUTTON);
+		 
+		 if(reading != lastChModeButtonState /*&& timers to avoid change spam*/){
+			 if(array_switch_target()){
+				 *distant_dva = array_read();
+			 }
+		 }
+		 
 		//if(victim_rescued_button.pressed()){
 			//array_pop()
 		//}
-		play_beep(255, 5);
+		
 	}
 	//wait for the RX and TX to end their functions
 	delay(1000);
@@ -156,7 +186,7 @@ void setup(){
 				}
 				break;
 			case BLE_UPDATELOCATION :
-				pkt_update_geoposition(pkt, pos);
+				pkt_update_geoposition(pkt, my_dva);
 				break;
 		}
 	}
