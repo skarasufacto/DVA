@@ -3,26 +3,10 @@
  * 	the recieved DVA
  * 	in rx mode.
  *--------------------------*/
-
-#ifndef _ARRAY_CONST
-#define ARRAY_MAX_LEN 50
-#define _ARRAY_CONST
-#endif
-
-//DVA structure definition
-#ifndef _DVA_STRUCT
-struct dva {
-	String id;
-	long lastUpdated;
-	float latitude;
-	float longitude;
-
-};
-#define _DVA_STRUCT
-#endif
+#include "DVA.h"
 
 //Private vars
-struct dva dva_array[ARRAY_MAX_LEN];
+Dva dva_array[ARRAY_MAX_LEN];
 int current_target;
 int current_len;
 
@@ -32,7 +16,7 @@ int current_len;
  * returns: void
  * ------------------------------*/
 void array_setup(){
-	memset(dva_array, 0, ARRAY_MAX_LEN * sizeof(struct dva));
+	memset(dva_array, 0, ARRAY_MAX_LEN * sizeof(Dva));
 	current_target = 0;
 	current_len = 0;
 }
@@ -49,7 +33,7 @@ void array_setup(){
  * 	false->not inserted/found 
  * 		&& max_len reached
  * ------------------------------*/
-boolean array_push(struct dva dva_object){
+boolean array_push(Dva dva_object){
 	boolean pushed = false;
 	boolean updated = false;
 	int i = 0;
@@ -110,8 +94,8 @@ boolean array_pop(){
  * returns: struct dva: the 
  * 		object we should read
  * ------------------------------*/
-struct dva array_read(){
-	struct dva dva_object;
+Dva array_read(){
+	Dva dva_object;
 	
 	if(current_len > 0){
 		dva_object = dva_array[current_target];

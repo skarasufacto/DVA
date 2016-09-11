@@ -35,7 +35,7 @@ void gps_setup(){
 void gps_read(){
 	char read;
 	int i = 0;
-	memset(tramaGPS, 0, sizeof(tramaGPS));
+	//memset(tramaGPS, 0, sizeof(tramaGPS));
 	
 	read = gps.read();
 	
