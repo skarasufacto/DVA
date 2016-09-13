@@ -24,16 +24,13 @@ void buzz_setup(){
  * Makes a "beep" sound of
  * custom duration and volume
  *---------------------------------
- * @volume: Volume of the sound.
- * 	has to be set in a range of
- * 	0-255
  * @duration: Duration of the 
  * 	played sound
  * --------------------------------
  * returns: void
  * ------------------------------*/
-void play_beep(int volume, int duration){
-	analogWrite(BUZZ_PIN, volume);
+void play_beep(int duration){
+	digitalWrite(BUZZ_PIN, HIGH);
 	delay(duration);
-	analogWrite(BUZZ_PIN, 0);
+	digitalWrite(BUZZ_PIN, LOW);
 }
