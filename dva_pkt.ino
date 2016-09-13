@@ -48,7 +48,7 @@ void rf_setup(){
 	 boolean result = false;
 	 pkt->initialized = false;
 	 
-	 /*while(Serial1.available() > 0){
+	 while(Serial1.available() > 0){
 		currentValue = Serial1.read();
 		
 		if(currentValue == PKT_END){
@@ -65,7 +65,7 @@ void rf_setup(){
 				pkt->data += currentValue;
 			}
 		}
-	}*/
+	}
 	
 	//Packet must be something like "DvA IDIDID (packet_type) PAYLOAD #"; the smallest packet is the CHMODE packet
 	if(pkt->len >= PKT_CHMODE_LEN){
@@ -108,7 +108,7 @@ void rf_setup(){
   * returns: void
   * -----------------------------*/
  void tx_to_ble(Dva_pkt *pkt){
-	 //Serial1.print(pkt->data.c_str());
+	 Serial1.print(pkt->data.c_str());
  }
  
  /*	tx_rf function
@@ -145,7 +145,7 @@ void rf_setup(){
 	}
  }
  
-  /*	rx_rf function
+ /*	rx_rf function
  * Reads rf and searches
  * for a valid packet.
  *---------------------------------
@@ -216,7 +216,7 @@ void rf_setup(){
 	 pos->longitude = atof(pkt->data.substring(PKT_LONGITUDE_START_POS, PKT_LONGITUDE_END_POS + 1).c_str());
  }
  
-  /*	parseFloatToString function
+ /*	parseFloatToString function
  * Returns a custom string of
  * 	len 8
  *---------------------------------

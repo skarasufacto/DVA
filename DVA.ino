@@ -29,9 +29,9 @@ Dva distant_dva;
  * returns: void
  * ------------------------------*/
 void setup(){
-        //Initialize Serial
+    //Initialize Serial
 	Serial.begin(9600);
-	//Serial1.begin(9600);
+	Serial1.begin(9600);
 	Serial.write("Initialized\n");
 	
 	role_DVA = TX_ROLE;
@@ -89,7 +89,7 @@ void setup(){
 		 //Then check if the array contains a DVA to search and set the arrow and meters to it
 		 if(distant_dva.initialized && !array_is_empty()){
 			 //calculate bearing, print meters and play sound
-			 play_beep(255, 5);
+			 play_beep(50); //TODO: oce we know the distance we should send different numbers of duration instead of a hardcoded value
 		 }
 		 else{
 			 if(!array_is_empty()){
