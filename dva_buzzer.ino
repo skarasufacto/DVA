@@ -18,6 +18,7 @@
  * ------------------------------*/
 void buzz_setup(){
 	pinMode(BUZZ_PIN, OUTPUT);
+	digitalWrite(BUZZ_PIN, HIGH);
 }
 
 /*	play_beep function
@@ -30,7 +31,11 @@ void buzz_setup(){
  * returns: void
  * ------------------------------*/
 void play_beep(int duration){
+	digitalWrite(BUZZ_PIN, LOW);
+	delay(duration);
 	digitalWrite(BUZZ_PIN, HIGH);
 	delay(duration);
 	digitalWrite(BUZZ_PIN, LOW);
+	delay(duration);
+	digitalWrite(BUZZ_PIN, HIGH);
 }

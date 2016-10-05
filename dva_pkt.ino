@@ -48,8 +48,8 @@ void rf_setup(){
 	 boolean result = false;
 	 pkt->initialized = false;
 	 
-	 while(Serial1.available() > 0){
-		currentValue = Serial1.read();
+	 while(Serial2.available() > 0){
+		currentValue = Serial2.read();
 		
 		if(currentValue == PKT_END){
 			break;
@@ -108,7 +108,7 @@ void rf_setup(){
   * returns: void
   * -----------------------------*/
  void tx_to_ble(Dva_pkt *pkt){
-	 Serial1.print(pkt->data.c_str());
+	 Serial2.print(pkt->data.c_str());
  }
  
  /*	tx_rf function
@@ -245,3 +245,23 @@ void rf_setup(){
 
 	 return result;
  }
+
+ /* get_pkt_info function
+  * Gets all the usefull information
+  * from a received packet
+  *---------------------------------
+  * @pkt: The packet to parse
+  *---------------------------------
+  * returns: A DVA struct with the
+  * 	valid values set
+  *---------------------------------*/
+  Dva get_pkt_info(Dva_pkt *pkt){
+	  Dva newDva;
+	  
+	  newDva.longitude = atof(pkt->data.substring(PKT_LONGITUDE_START_POS, PKT_LONGITUDE_END_POS +1).c_str());
+	  newDva.latitude = atof(pkt->data.substring(PKT_LATITUDE_START_POS, PKT_LATITUDE_END_POS +1).c_str());
+	  newDva.id = pkt->data.substring(PKT_ID_START_POS, PKT_ID_END_POS +1);
+	  newDva.initialized = true;
+	  
+	  return newDva;
+  }

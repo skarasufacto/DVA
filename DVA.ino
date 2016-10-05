@@ -22,6 +22,9 @@ long ChModeDelay;
 Dva my_dva;
 Dva distant_dva;
 
+double distance = 0.0;
+double course = 0.0;
+
 /*	setup function
  * Used to set variables and pins
  * the arduino will use
@@ -31,7 +34,7 @@ Dva distant_dva;
 void setup(){
     //Initialize Serial
 	Serial.begin(9600);
-	Serial1.begin(9600);
+	Serial2.begin(9600);
 	Serial.write("Initialized\n");
 	
 	role_DVA = TX_ROLE;
@@ -50,6 +53,11 @@ void setup(){
 	
 	//Initialize lcd
 	lcd_setup();
+	//Initialize buzzer
+	buzz_setup();
+
+        //Initialize GPS
+        gps_setup();
 	
 	//Initialize geoposition
 	/*position->latitude = 0.0;
@@ -74,29 +82,38 @@ void setup(){
 	 
 	 //if role_DVA == TX
 	 if(role_DVA == TX_ROLE){
-		 tx_rf(&my_dva, RF_SEND_LOCATION);
+		 gps_read(&my_dva);
+         tx_rf(&my_dva, RF_SEND_LOCATION);
 	 }
 	 //else role_DVA = RX
 	 else{
+                 //Read the gps module for usefull data
+                 gps_read(&my_dva);
+                 
 		 //Check if the radio has a packet for us
 		 if(rx_rf(&pkt)){
 			 tx_to_ble(&pkt);	//Send the data to the app
-			 lcd_print((char*)pkt.data.c_str());	//WIP; must be deleted on final release
+			 //lcd_print((char*)pkt.data.c_str());	//WIP; must be deleted on final release
+  Serial.print(pkt.data.c_str());
 			 //TODO: Add the next logic to this part of the code....
-			 //array_push(get_packet_info(pkt));
+			 array_push(get_pkt_info(&pkt));
 		 }
 		 
 		 //Then check if the array contains a DVA to search and set the arrow and meters to it
 		 if(distant_dva.initialized && !array_is_empty()){
 			 //calculate bearing, print meters and play sound
-			 play_beep(50); //TODO: oce we know the distance we should send different numbers of duration instead of a hardcoded value
+			 distance = gps_getDistance(my_dva, distant_dva);
+			 course = gps_getCourse(my_dva, distant_dva);
+			 //TODO: Create function on dva_lcd or dva_oled to display the information
+			 play_beep(distance);
 		 }
 		 else{
 			 if(!array_is_empty()){
 				 distant_dva = array_read();
+                                 distant_dva.initialized = true;
 			 }
 			 else{
-				 lcd_print("No DVA found");
+				 lcd_print("No DVA found"); //Cambiar a oled
 			 }
 		 }
 		 
@@ -108,7 +125,7 @@ void setup(){
 				 distant_dva = array_read();
 			 }
 		 }
-		 
+		 //TODO: Buy button!
 		//if(victim_rescued_button.pressed()){
 			//array_pop()
 		//}
@@ -153,4 +170,6 @@ void setup(){
 		
 		lastChModeTime = millis();
 	}
+	
+	//TODO: change mode if mode == RX_MODE && time_in_rx() > 3min
  }
