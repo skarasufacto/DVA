@@ -23,7 +23,7 @@ Dva my_dva;
 Dva distant_dva;
 
 double distance = 0.0;
-double course = 0.0;
+int course = N;
 
 /*	setup function
  * Used to set variables and pins

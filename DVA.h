@@ -58,5 +58,17 @@ typedef struct DVAs {
 #define PKT_LONGITUDE_START_POS 18
 #define PKT_LONGITUDE_END_POS 25
 
+//Course constants
+#ifndef _COURSE_CONST
+#define N 0
+#define NE 1
+#define E 2
+#define SE 3
+#define S 4
+#define SO 5
+#define O 6
+#define NO 7
+#define _COURSE_CONST
+
 #define _DVA_H
 #endif

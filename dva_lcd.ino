@@ -5,6 +5,8 @@
  *	data on lcd screen
  *--------------------------*/
 
+//TODO: redo
+
 //Include and defines
 #ifndef _INCLUDED_LCD
 #include <LiquidCrystal_I2C.h>

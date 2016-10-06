@@ -41,11 +41,11 @@ void gps_setup(){
 void gps_read(Dva *myDva){
 	while (Serial1.available() > 0){
 		if (gps.encode(Serial1.read())){
-			//if(gps.location.isValid()){
+			if(gps.location.isValid()){
 				myDva->latitude = gps.location.lat();
 				myDva->longitude = gps.location.lng();
 Serial.print(gps.location.lat());
-			//}
+			}
 		}
 	}
 }
@@ -54,7 +54,38 @@ double gps_getDistance(Dva first, Dva second){
 	return TinyGPSPlus::distanceBetween(first.latitude, first.longitude, second.latitude, second.longitude);
 }
 
-double gps_getCourse(Dva first, Dva second){
-	return TinyGPSPlus::courseTo(first.latitude, first.longitude, second.latitude, second.longitude);
-	/*TODO: examine the result or use TinyGPSPlus.cardinal(course) to get the data*/
+int gps_getCourse(Dva first, Dva second){
+	double course = TinyGPSPlus::courseTo(first.latitude, first.longitude, second.latitude, second.longitude);
+	int result = N;
+	
+	if(course < 0){
+		if(course >= 22.5 && course < 67.5){
+			result = NE;
+		}
+		else if(course >= 67.5 && course < 112.5){
+			result = E;
+		}
+		else if(course >= 112.5 && course < 157.5){
+			result = SE;
+		}
+		else if(course >= 157.5){
+			result = S;
+		}
+	}
+	else{
+		if(course <= -22.5 && course > -67.5){
+			result = NW;
+		}
+		else if(course <= -67.5 && course > -112.5){
+			result = W;
+		}
+		else if(course <= -112.5 && course > -157.5){
+			result = SW;
+		}
+		else if(course <= -157.5){
+			result = S;
+		}
+	}
+	
+	return result;
 }
