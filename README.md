@@ -26,5 +26,3 @@ Install
 Authors
 -
 - Joan Josep Aleixendri.
-- Lorena Arriaga.
-- David Duque.
