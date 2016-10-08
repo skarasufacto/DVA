@@ -6,11 +6,6 @@
  *--------------------------*/
 #include "DVA.h"
 
-#ifndef _SOFTWARE_SERIAL_INCLUDED
-#include <SoftwareSerial.h>
-#define _SOFTWARE_SERIAL_INCLUDED
-#endif
-
 #ifndef _TINYGPS_INCLUDED
 #include <TinyGPS++.h>
 #define _TINYGPS_INCLUDED
@@ -20,7 +15,7 @@
 #define GPS_TX_PIN 6
 #define GPS_RX_PIN 7
 #define GPS_MAX_FRAME_LEN 100
-#define GPSBAUD 4800 //TODO: set the correct baud
+#define GPSBAUD 9600 //TODO: set the correct baud
 #define _GPS_CONST
 #endif
 
@@ -33,27 +28,55 @@ TinyGPSPlus gps;
  * returns: void
  * ------------------------------*/
 void gps_setup(){
-	//pinMode(GPS_RX_PIN, INPUT);
-	//pinMode(GPS_TX_PIN, OUTPUT);
-	Serial1.begin(9600);
+	Serial1.begin(GPSBAUD);
 }
 
+/*	gps_read function
+ * Reads the gps data, parses the
+ * 		info and modifies the 
+ * 		latitude and longitude of
+ * 		the device's structure
+ *----------------------------------
+ * @my_dva: Dva structure where the
+ * 		data will be stored
+ *----------------------------------
+ * returns: void
+ *--------------------------------*/
 void gps_read(Dva *myDva){
 	while (Serial1.available() > 0){
 		if (gps.encode(Serial1.read())){
 			if(gps.location.isValid()){
 				myDva->latitude = gps.location.lat();
 				myDva->longitude = gps.location.lng();
-Serial.print(gps.location.lat());
 			}
 		}
 	}
 }
 
+/*	gps_getDistance function
+ * Usefull to know the distance
+ * 		between 2 devices
+ *----------------------------------
+ * @first: A dva structure
+ * @second: The second Dva structure
+ *----------------------------------
+ * retuns: double: the distance
+ * 			between first and second
+ *--------------------------------*/
 double gps_getDistance(Dva first, Dva second){
 	return TinyGPSPlus::distanceBetween(first.latitude, first.longitude, second.latitude, second.longitude);
 }
 
+/*	gps_getCourse function
+ * Returns the direction of a
+ * 		distant DVA
+ *----------------------------------
+ * @first: Our Dva structure
+ * @second: The distant Dva
+ *----------------------------------
+ * returns: int: the direction the 
+ * 		second structure is
+ *--------------------------------*/
 int gps_getCourse(Dva first, Dva second){
 	double course = TinyGPSPlus::courseTo(first.latitude, first.longitude, second.latitude, second.longitude);
 	int result = N;

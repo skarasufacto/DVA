@@ -42,10 +42,7 @@ void setup(){
 	lastChModeTime = 0;
 	ChModeDelay = 5000;
   
-    my_dva.lastUpdated = 0.0;
-	my_dva.latitude = 31.435;
-	my_dva.longitude = 125.485;
-	//set the pins for the tx and rx
+    //set the pins for the tx and rx
 	rf_setup();
 	
 	//Initialized buttons pins
@@ -56,12 +53,8 @@ void setup(){
 	//Initialize buzzer
 	buzz_setup();
 
-        //Initialize GPS
-        gps_setup();
-	
-	//Initialize geoposition
-	/*position->latitude = 0.0;
-	position->longitude = 0.0;*/
+    //Initialize GPS
+    gps_setup();
 	
 	my_dva.id = "000001";
 	my_dva.initialized = false;
@@ -87,15 +80,12 @@ void setup(){
 	 }
 	 //else role_DVA = RX
 	 else{
-                 //Read the gps module for usefull data
-                 gps_read(&my_dva);
+		 //Read the gps module for usefull data
+         gps_read(&my_dva);
                  
 		 //Check if the radio has a packet for us
 		 if(rx_rf(&pkt)){
 			 tx_to_ble(&pkt);	//Send the data to the app
-			 //lcd_print((char*)pkt.data.c_str());	//WIP; must be deleted on final release
-  Serial.print(pkt.data.c_str());
-			 //TODO: Add the next logic to this part of the code....
 			 array_push(get_pkt_info(&pkt));
 		 }
 		 
@@ -104,7 +94,7 @@ void setup(){
 			 //calculate bearing, print meters and play sound
 			 distance = gps_getDistance(my_dva, distant_dva);
 			 course = gps_getCourse(my_dva, distant_dva);
-			 //TODO: Create function on dva_lcd or dva_oled to display the information
+			 display_print_arrow(distance, course);
 			 play_beep(distance);
 		 }
 		 else{
@@ -113,7 +103,7 @@ void setup(){
                                  distant_dva.initialized = true;
 			 }
 			 else{
-				 lcd_print("No DVA found"); //Cambiar a oled
+				 display_print("No DVA found");
 			 }
 		 }
 		 
@@ -125,10 +115,12 @@ void setup(){
 				 distant_dva = array_read();
 			 }
 		 }
-		 //TODO: Buy button!
-		//if(victim_rescued_button.pressed()){
-			//array_pop()
-		//}
+		 
+		 reading = buttons_read(RESCUED_VICTIM_BUTTON);
+		 
+		 if(reading != lastChModeButtonState /*&& add timers*/){
+			array_pop()
+		 }
 		
 	}
 	//wait for the RX and TX to end their functions
@@ -158,8 +150,7 @@ void setup(){
 	}
 	
 	if(changeRole && (millis() - lastChModeTime) > ChModeDelay){
-                Serial.print("Changed role\n");
-		switch(role_DVA){
+        switch(role_DVA){
 			case TX_ROLE :
 				role_DVA = RX_ROLE;
 				break;
@@ -170,6 +161,4 @@ void setup(){
 		
 		lastChModeTime = millis();
 	}
-	
-	//TODO: change mode if mode == RX_MODE && time_in_rx() > 3min
  }
