@@ -15,6 +15,7 @@
 //Buttons ids, used to read data
 #define CH_MODE_BUTTON 0
 #define NEXT_VICTIM_BUTTON 1
+#define RESCUED_VICTIM_BUTTON 2
 
 //Packet structure definition
 typedef struct dva_pkts {
@@ -60,15 +61,16 @@ typedef struct DVAs {
 
 //Course constants
 #ifndef _COURSE_CONST
-#define N 0
-#define NE 1
-#define E 2
-#define SE 3
-#define S 4
-#define SO 5
-#define O 6
-#define NO 7
+#define NORTH 0
+#define NORTHEAST 1
+#define EAST 2
+#define SOUTHEAST 3
+#define SOUTH 4
+#define SOUTHWEST 5
+#define WEST 6
+#define NORTHWEST 7
 #define _COURSE_CONST
+#endif
 
 #define _DVA_H
 #endif
